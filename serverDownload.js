@@ -2,6 +2,72 @@ import JSZip from 'jszip';
 import saveAs from 'file-saver';
 import forge from 'node-forge';
 
+const cssTemplate = `/* Universal CSS Reset: Targets every element to zero out all spacing */
+* {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure the main root elements are also explicitly zeroed out */
+body, html {
+    overflow: hidden; /* Keep this to prevent scrollbars */
+    width: 320px; /* Fixed Twitch panel width */
+    height: 100%;
+}
+
+body {
+    background-color: #0e0e10;
+    color: white;
+    font-family: system-ui, sans-serif;
+    margin: 0;
+    padding: 10px;
+    overflow-x: hidden;
+}
+#app {
+    position: relative;
+    width: 320px; /* Match fixed panel width */
+    max-width: 320px;
+    min-height: 100px;
+    margin: 0 auto;
+}
+.teb-wrapper {
+    position: absolute;
+    box-sizing: border-box;
+}
+.teb-btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+.teb-btn:hover { opacity: 0.9; }
+.teb-text { line-height: 1.4; }
+.teb-image { max-width: 100%; height: auto; display: block; border-radius: 4px; }
+.teb-divider { width: 100%; height: 1px; }
+.teb-container { border-radius: 4px; height: 100%; min-height: 20px; box-sizing: border-box; }`;
+
+const jsTemplate = `window.twitch = window.Twitch.ext;
+
+twitch.onContext((context) => {
+    console.log('Context:', context);
+});
+
+twitch.onAuthorized((auth) => {
+    console.log('Authorized:', auth);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.teb-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            console.log('Button clicked:', btn.textContent);
+        });
+    });
+});`;
+
 export function setupServerDownload({ btnServer }) {
     btnServer.addEventListener('click', () => {
         // UI Feedback
@@ -156,71 +222,8 @@ function escapeAttribute(str) {
     return String(str || '').replace(/"/g, '&quot;');
 }
 
-const cssContent = `
-/* Universal CSS Reset: Targets every element to zero out all spacing */
-* {
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-}
-
-/* Ensure the main root elements are also explicitly zeroed out */
-body, html {
-    overflow: hidden; /* Keep this to prevent scrollbars */
-    width: 320px; /* Fixed Twitch panel width */
-    height: 100%;
-}
-
-body {
-    background-color: #0e0e10;
-    color: white;
-    font-family: system-ui, sans-serif;
-    margin: 0;
-    padding: 10px;
-    overflow-x: hidden;
-}
-#app {
-    position: relative;
-    width: 320px; /* Match fixed panel width */
-    max-width: 320px;
-    min-height: 100px;
-    margin: 0 auto;
-}
-.teb-wrapper {
-    position: absolute;
-    box-sizing: border-box;
-}
-.teb-btn {
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    width: 100%;
-    cursor: pointer;
-    font-weight: 600;
-    transition: opacity 0.2s;
-}
-.teb-btn:hover { opacity: 0.9; }
-.teb-text { line-height: 1.4; }
-.teb-image { max-width: 100%; height: auto; display: block; border-radius: 4px; }
-.teb-divider { width: 100%; height: 1px; }
-.teb-container { border-radius: 4px; height: 100%; box-sizing: border-box; }
-`;
-
-const jsContent = ''
-    + 'window.twitch = window.Twitch.ext;\n\n'
-    + 'twitch.onContext((context) => {\n'
-    + '    console.log(\'Context:\', context);\n'
-    + '});\n\n'
-    + 'twitch.onAuthorized((auth) => {\n'
-    + '    console.log(\'Authorized:\', auth);\n'
-    + '});\n\n'
-    + 'document.addEventListener(\'DOMContentLoaded\', () => {\n'
-    + '    document.querySelectorAll(\'.teb-btn\').forEach(btn => {\n'
-    + '        btn.addEventListener(\'click\', () => {\n'
-    + '            console.log(\'Button clicked:\', btn.textContent);\n'
-    + '        });\n'
-    + '    });\n'
-    + '});\n';
+const cssContent = ${JSON.stringify(cssTemplate)};
+const jsContent = ${JSON.stringify(jsTemplate)};
 
 const manifest = {
     "name": "My DragDrop Extension",
