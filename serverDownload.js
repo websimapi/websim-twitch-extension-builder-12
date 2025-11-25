@@ -5,7 +5,7 @@ import forge from 'node-forge';
 const cssTemplate = `/* Universal CSS Reset: Targets every element to zero out all spacing */
 * {
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0;
     box-sizing: border-box !important;
 }
 
@@ -14,14 +14,17 @@ body, html {
     overflow: hidden; /* Keep this to prevent scrollbars */
     width: 320px; /* Fixed Twitch panel width */
     height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 body {
     background-color: #0e0e10;
     color: white;
-    font-family: system-ui, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
     margin: 0;
-    padding: 10px;
+    padding: 0;
     overflow-x: hidden;
 }
 #app {
@@ -37,11 +40,14 @@ body {
 }
 .teb-btn {
     border: none;
-    padding: 8px 16px;
+    padding: 8px 16px !important;
     border-radius: 4px;
     width: 100%;
     cursor: pointer;
     font-weight: 600;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
     transition: opacity 0.2s;
 }
 .teb-btn:hover { opacity: 0.9; }
@@ -166,7 +172,7 @@ function generateHTMLForView(view) {
             case 'button':
                 return \`<div class="teb-wrapper" style="\${layout}"><button class="teb-btn" style="background-color:\${escapeAttribute(data.bgColor)};color:\${escapeAttribute(data.color)};">\${escapeHtml(data.label || '')}</button></div>\`;
             case 'container':
-                return \`<div class="teb-wrapper" style="\${layout}"><div class="teb-container" style="background-color:\${escapeAttribute(data.bgColor)};padding:\${escapeAttribute(data.padding)};border-radius:\${escapeAttribute(data.radius)};color:#aaa;font-size:0.8rem;text-align:center;border:1px dashed #444;">Container Area</div></div>\`;
+                return \`<div class="teb-wrapper" style="\${layout}"><div class="teb-container" style="background-color:\${escapeAttribute(data.bgColor)};padding:\${escapeAttribute(data.padding)};border-radius:\${escapeAttribute(data.radius)};color:#adadb8;font-size:13px;text-align:center;border:1px dashed #444;">Container Area</div></div>\`;
             case 'image':
                 return \`<div class="teb-wrapper" style="\${layout}"><img class="teb-image" src="\${escapeAttribute(data.src || '')}" alt="\${escapeAttribute(data.alt || '')}" /></div>\`;
             case 'divider':
